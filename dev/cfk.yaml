@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: confluent-kafka
+  namespace: argocd
+spec:
+  project: default
+  source:
+    helm:
+      valuesObject:
+        namespaced: false
+    repoURL: 'https://packages.confluent.io/helm'
+    targetRevision: 0.824.40
+    chart: confluent-for-kubernetes
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: confluent
