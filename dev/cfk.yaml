@@ -4,13 +4,16 @@ metadata:
   name: confluent-kafka
   namespace: argocd
 spec:
+  syncPolicy:
+    syncOptions:
+      - ServerSideApply=true
   project: default
   source:
     helm:
       valuesObject:
         namespaced: false
     repoURL: 'https://packages.confluent.io/helm'
-    targetRevision: 0.824.40
+    targetRevision: 0.*.*
     chart: confluent-for-kubernetes
   destination:
     server: 'https://kubernetes.default.svc'
