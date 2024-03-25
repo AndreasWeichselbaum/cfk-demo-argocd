@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/AndreasWeichselbaum/cfk-demo-helm-chart'
     path: cfk-demo
-    targetRevision: HEAD
+    targetRevision: v0.1.1
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: cfk
