@@ -1,18 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cfk-demo-dev
+  name: cfk-demo-prod
   namespace: argocd
 spec:
-  project: kafka-confluent-poc-dev
+  project: kafka-confluent-poc-prod
   source:
     repoURL: 'https://github.com/AndreasWeichselbaum/cfk-demo-helm-chart'
     path: cfk-demo
-    targetRevision: v0.2.0
+    targetRevision: v0.1.0
     helm:
       valuesObject:
         kafka:
           replicas: 3
+        namespace: kafka-confluent-poc-prod
   destination:
-    name: in-cluster
-    namespace: kafka-confluent-poc
+    server: 'https://kubernetes.default.svc'
+    namespace: kafka-confluent-poc-prod

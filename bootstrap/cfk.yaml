@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: confluent-kafka
+  name: confluent-kafka-crds
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: '-1'
@@ -18,5 +18,5 @@ spec:
     targetRevision: 0.*.*
     chart: confluent-for-kubernetes
   destination:
-    server: 'https://kubernetes.default.svc'
+    name: in-cluster
     namespace: confluent
