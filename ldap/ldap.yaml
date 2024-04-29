@@ -23,6 +23,10 @@ data:
     objectClass: organizationalUnit
     ou: People
 
+    dn: cn=binduser,ou=Server,dc=example,dc=org
+    objectClass: Server
+    userpassword: kafka
+
     dn: cn=jane,ou=People,dc=example,dc=org
     objectClass: person
     objectClass: inetOrgPerson
