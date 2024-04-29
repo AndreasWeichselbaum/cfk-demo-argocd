@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/AndreasWeichselbaum/cfk-demo-helm-chart'
     path: cfk-demo
-    targetRevision: v0.2.0
+    targetRevision: v0.2.1
     helm:
       valuesObject:
         kafka:
