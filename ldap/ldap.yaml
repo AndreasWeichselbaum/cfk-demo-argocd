@@ -22,10 +22,17 @@ data:
     dn: ou=People,dc=example,dc=org
     objectClass: organizationalUnit
     ou: People
-
-    dn: cn=binduser,ou=Server,dc=example,dc=org
-    objectClass: Server
-    userpassword: kafka
+    
+    dn: ou=Server,dc=example,dc=org
+    objectClass: organizationalUnit
+    ou: Server
+    
+    dn: cn=kafka,ou=Server,dc=example,dc=org
+    userPassword: kafka
+    description: kafka user
+    objectClass: simpleSecurityObject
+    objectClass: organizationalRole
+    cn: kafka
 
     dn: cn=jane,ou=People,dc=example,dc=org
     objectClass: person
