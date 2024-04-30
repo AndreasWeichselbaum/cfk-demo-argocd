@@ -15,7 +15,7 @@ spec:
       valuesObject:
         namespaced: false
     repoURL: 'https://packages.confluent.io/helm'
-    targetRevision: 0.*.*
+    targetRevision: main
     chart: confluent-for-kubernetes
   destination:
     name: in-cluster
