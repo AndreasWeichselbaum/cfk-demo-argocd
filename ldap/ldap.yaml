@@ -11,14 +11,6 @@ metadata:
   namespace:  openldap-demo
 data:
   config-ldap.ldif: |
-    # Already included in default config of Docker image osixia/openldap:1.5.0.
-    #
-    # dn: dc=example,dc=org
-    # objectClass: dcObject
-    # objectClass: organization
-    # o: Example Company
-    # dc: example
-
     dn: ou=People,dc=example,dc=org
     objectClass: organizationalUnit
     ou: People
@@ -27,7 +19,7 @@ data:
     objectClass: organizationalUnit
     ou: Server
     
-    dn: cn=kafka,ou=Server,dc=example,dc=org
+    dn: cn=kafka,dc=example,dc=org
     userPassword: kafka
     description: kafka user
     objectClass: simpleSecurityObject
@@ -66,6 +58,14 @@ data:
     objectClass: groupOfNames
     cn: developers
     member: cn=jane,ou=People,dc=example,dc=org
+    member: cn=kafka,ou=Server,dc=example,dc=org
+  config-ldap2.ldif: |
+    dn: olcDatabase={1}hdb,cn=config
+    changetype: modify
+    add: olcAccess
+    olcAccess: to * by * read
+
+
 ---
 apiVersion: v1
 kind: Service
