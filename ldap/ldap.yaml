@@ -33,6 +33,20 @@ data:
     objectClass: simpleSecurityObject
     objectClass: organizationalRole
     cn: kafka
+    
+    dn: cn=sr,dn=example,dn=org
+    userPassword: sr-secret
+    description: schema registry user
+    objectClass: simpleSecurityObject
+    objectClass: organizationalRole
+    cn: sr
+    
+    dn: cn=krp,dc=example,dc=org
+    userPassword: krp-secret
+    description: krp user
+    objectClass: simpleSecurityObject
+    objectClass: organizationalRole
+    cn: krp
 
     dn: cn=jane,ou=People,dc=example,dc=org
     objectClass: person
