@@ -27,14 +27,14 @@ data:
     objectClass: organizationalUnit
     ou: Server
     
-    dn: cn=kafka,ou=Server,dc=example,dc=org
+    dn: cn=kafka,dc=example,dc=org
     userPassword: kafka
     description: kafka user
     objectClass: simpleSecurityObject
     objectClass: organizationalRole
     cn: kafka
     
-    dn: cn=sr,dn=example,dn=org
+    dn: cn=sr,dc=example,dc=org
     userPassword: sr-secret
     description: schema registry user
     objectClass: simpleSecurityObject
@@ -47,7 +47,7 @@ data:
     objectClass: simpleSecurityObject
     objectClass: organizationalRole
     cn: krp
-
+    
     dn: cn=jane,ou=People,dc=example,dc=org
     objectClass: person
     objectClass: inetOrgPerson
