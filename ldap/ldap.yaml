@@ -48,20 +48,18 @@ data:
     objectClass: organizationalRole
     cn: krp
     
-    dn: cn=jane,ou=People,dc=example,dc=org
-    objectClass: person
-    objectClass: inetOrgPerson
-    sn: doe
+    dn: cn=jane,dc=example,dc=org
+    objectClass: simpleSecurityObject
+    objectClass: organizationalRole
+    description: kafka user
     cn: jane
-    mail: janedoe@example.com
     userpassword: foo
 
-    dn: cn=john,ou=People,dc=example,dc=org
-    objectClass: person
-    objectClass: inetOrgPerson
-    sn: doe
+    dn: cn=john,dc=example,dc=org
+    objectClass: simpleSecurityObject
+    objectClass: organizationalRole
+    description: doe
     cn: john
-    mail: johndoe@example.com
     userpassword: bar
 
     # Group definitions.
@@ -79,7 +77,7 @@ data:
     dn: cn=developers,ou=Groups,dc=example,dc=org
     objectClass: groupOfNames
     cn: developers
-    member: cn=jane,ou=People,dc=example,dc=org
+    member: cn=john,dc=example,dc=org
 ---
 apiVersion: v1
 kind: Service
