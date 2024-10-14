@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cfk-demo-kafka-configuration-dev
+  namespace: argocd
+spec:
+  project: kafka-confluent-poc-dev
+  source:
+    repoURL: 'https://github.com/harasztipeter/cfk-demo-kafka-configuration'
+    path: cfk-demo
+    targetRevision: main
+  destination:
+    name: in-cluster
+    namespace: kafka-confluent-poc

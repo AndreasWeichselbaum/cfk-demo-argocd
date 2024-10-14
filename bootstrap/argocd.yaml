@@ -29,6 +29,7 @@ spec:
   sourceRepos:
     - 'https://github.com/AndreasWeichselbaum/cfk-demo-helm-chart'
     - 'https://packages.confluent.io/helm'
+    - 'https://github.com/harasztipeter/cfk-demo-kafka-configuration'
 
   # Only permit applications to deploy to the guestbook namespace in the same cluster
   # Destination clusters can be identified by 'server', 'name', or both.
