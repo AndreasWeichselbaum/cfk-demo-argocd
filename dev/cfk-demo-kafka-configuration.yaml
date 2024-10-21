@@ -9,6 +9,9 @@ spec:
     repoURL: 'https://github.com/harasztipeter/cfk-demo-kafka-configuration'
     path: cfk-demo
     targetRevision: main
+    helm:
+      valueFiles:
+        - dev/easy.yaml
   destination:
     name: in-cluster
     namespace: kafka-confluent-poc
