@@ -5,14 +5,40 @@ metadata:
   namespace: argocd
 spec:
   project: kafka-confluent-poc-dev
-  source:
-    repoURL: 'https://github.com/AndreasWeichselbaum/cfk-demo-helm-chart'
-    path: cfk-demo
-    targetRevision: main
-    helm:
-      valuesObject:
-        kafka:
-          replicas: 3
   destination:
-    name: in-cluster
+    #server: https://kubernetes.default.svc
     namespace: kafka-confluent-poc
+    name: in-cluster
+  sources:
+    - repoURL: >-
+        https://github.com/harasztipeter/cfk-demo-helm-chart-fork
+      path: cfk-demo
+      targetRevision: feature/test-configoverrides-merge
+      helm:
+        valueFiles:
+          - values.yaml
+          - $values/cfk-demo/dev/values-kafka-platform.yaml
+    - repoURL: >-
+        https://github.com/harasztipeter/cfk-demo-kafka-configuration
+      targetRevision: feature/test-override-merge-behaviour
+      ref: values
+
+
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: cfk-demo-dev
+#   namespace: argocd
+# spec:
+#   project: kafka-confluent-poc-dev
+#   source:
+#     repoURL: 'https://github.com/harasztipeter/cfk-demo-helm-chart-fork'
+#     path: cfk-demo
+#     targetRevision: feature/test-sync-waves
+#     helm:
+#       valuesObject:
+#         kafka:
+#           replicas: 3
+#   destination:
+#     name: in-cluster
+#     namespace: kafka-confluent-poc
