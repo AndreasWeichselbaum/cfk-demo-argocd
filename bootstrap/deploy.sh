@@ -16,3 +16,5 @@ kubectl apply -f ../dev/argo-workflows.yaml
 kubectl apply -f ../dev/aw-rbac/example-rb.yaml
 kubectl apply -f ../dev/aw-rbac/example-role.yaml
 kubectl apply -f ../dev/aw-rbac/example-sa.yaml
+kubectl apply -f ../dev/aw-rbac/example-clusterrole.yaml
+kubectl apply -f ../dev/aw-rbac/example-crb.yaml
