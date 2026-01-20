@@ -8,7 +8,6 @@ rules:
     - argoproj.io
     - ""
   resources:
-    - clusterworkflowtemplates
     - cronworkflows
     - eventsources
     - sensors
