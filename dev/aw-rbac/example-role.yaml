@@ -19,8 +19,9 @@ rules:
     - secrets
   verbs:
     - get
-    - watch
     - list
+    - watch
     - create
-    - delete
     - update
+    - patch
+    - delete
