@@ -6,6 +6,7 @@ metadata:
   labels:
     example: "true"
 spec:
+  serviceAccountName: argo-workflow-testuser
   arguments:
     parameters:
       - name: message
