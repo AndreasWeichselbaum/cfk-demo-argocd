@@ -183,3 +183,11 @@ https://argo-workflows.readthedocs.io/en/latest/access-token/#access-token
 
 Das Skript `bootstrap/getbearer.sh` implementiert den Prozess und holt einen Bearer Token für den erstellten ServiceAccount, der in das Feld in Argo Workflows gepastet werden kann. 
 
+
+## Archivierung von Logs
+
+Wenn von einem Workflow ein Pod gestaret wird, werden dessen Logs nach dessen Beendigung nicht standardmäßig archiviert. 
+
+Dazu muss das *Archive Logs* Feature konfiguriert werden: https://argo-workflows.readthedocs.io/en/latest/configure-archive-logs/
+
+Dafür muss auch ein *Artifact Repository* eingerichtet werden, wo die Logs gespeichert werden. Eine Option dafür könnte Azure Blob Storage sein: https://argo-workflows.readthedocs.io/en/latest/configure-artifact-repository/ 
