@@ -25,12 +25,6 @@ spec:
         args:
           - echo
           - "Hello Argo!"
-
-
-    - name: wait-30s
-      suspend:
-        duration: "30s"
-
   ttlStrategy:
     secondsAfterCompletion: 300
   podGC:
