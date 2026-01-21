@@ -16,6 +16,7 @@ rules:
     - workflowtemplates
     - workflowtaskresults
     - pods
+    - secrets
   verbs:
     - get
     - watch

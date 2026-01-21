@@ -25,6 +25,8 @@ spec:
         args:
           - echo
           - "Hello Argo!"
+      archiveLocation:
+        archiveLogs: true
   ttlStrategy:
     secondsAfterCompletion: 300
   podGC:
