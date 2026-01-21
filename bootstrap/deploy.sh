@@ -28,8 +28,11 @@ helm install argo-artifacts minio/minio \
   --set mode=standalone \
   --set service.type=LoadBalancer
 
-kubectl port-forward pod/argo-artifacts-<POD-ID> 9001:9001
 
-Decode the argo-artifacts secret with k9s, log in to minio UI at localhost:9001
+# Manual steps to get logs in Argo Workflows UI over Minio:
 
-Create a bucket named "my-bucket"
+# kubectl port-forward pod/argo-artifacts-<POD-ID> 9001:9001
+
+# Decode the argo-artifacts secret with k9s, log in to minio UI at localhost:9001
+
+# Create a bucket named "my-bucket"
