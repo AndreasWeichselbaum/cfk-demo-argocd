@@ -19,4 +19,4 @@ spec:
     helm:
       values: |
         crds:
-          full: false
+          full: true
