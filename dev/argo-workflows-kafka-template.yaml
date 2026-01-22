@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: kafka-poc
+  namespace: default
+spec:
+  archiveLogs: true
+  artifactRepositoryRef:
+    configMap: workflow-controller-configmap
+    key: artifactRepository
+  serviceAccountName: argo-workflow-testuser
+  entrypoint: argosay
+  arguments:
+    parameters:
+      - name: message
+        value: hello argo
+  templates:
+    - name: argosay
+      inputs:
+        parameters:
+          - name: message
+            value: "{{workflow.parameters.message}}"
+      container:
+        name: main
+        image: argoproj/argosay:v2
+        command:
+          - /argosay
+        args:
+          - echo
+          - "{{inputs.parameters.message}}"
+  ttlStrategy:
+    secondsAfterCompletion: 300
+  podGC:
+    strategy: OnPodCompletion
