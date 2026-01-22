@@ -16,7 +16,7 @@ spec:
         name: main
         image: confluentinc/cp-server:7.5.0
         command: ["/bin/bash"]
-        args: ["-c", 'cd / && {{ printf "./tmp/%s"  list-topics.sh }}']
+        args: ["-c", 'cd / && ./tmp/list-topics.sh']
         volumeMounts:
           - mountPath: "/mnt"
             name: kafka-poc-user-properties
@@ -57,8 +57,4 @@ data:
 
     echo 'list topics:'
 
-    {{ printf (cat
-    "kafka-topics --list --bootstrap-server"
-    "kafka.kafka-%s.svc.cluster.local:9092" 
-    "--command-config /mnt/kafka_user.properties"
-    ) poc | join "\n" }}
+    kafka-topics --list --bootstrap-server kafka.kafka-poc.svc.cluster.local:9092 --command-config /mnt/kafka_user.properties
