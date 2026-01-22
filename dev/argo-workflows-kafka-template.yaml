@@ -22,6 +22,14 @@ spec:
             name: kafka-poc-user-properties
           - mountPath: "/tmp"
             name: kafka-poc-commands
+      volumes:
+        - name: kafka-poc-user-properties
+          secret:
+            secretName: kafka-poc-user-properties
+        - name: kafka-poc-commands
+          configMap:
+            name: kafka-poc-commands
+            defaultMode: 0755
   ttlStrategy:
     secondsAfterCompletion: 300
   podGC:
