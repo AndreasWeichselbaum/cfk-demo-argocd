@@ -116,13 +116,15 @@ rules:
     - workflowtemplates
     - workflowtaskresults
     - pods
+    - secrets
   verbs:
     - get
-    - watch
     - list
+    - watch
     - create
-    - delete
     - update
+    - patch
+    - delete
 ```
 
 ```
@@ -186,8 +188,61 @@ Das Skript `bootstrap/getbearer.sh` implementiert den Prozess und holt einen Bea
 
 ## Archivierung von Logs
 
-Wenn von einem Workflow ein Pod gestaret wird, werden dessen Logs nach dessen Beendigung nicht standardmäßig archiviert. 
+Wenn von einem Workflow ein Pod gestaret wird, werden dessen Logs nach dessen Beendigung nicht standardmäßig archiviert und auch nicht in der Argo Workflows UI angezeigt. 
 
 Dazu muss das *Archive Logs* Feature konfiguriert werden: https://argo-workflows.readthedocs.io/en/latest/configure-archive-logs/
 
-Dafür muss auch ein *Artifact Repository* eingerichtet werden, wo die Logs gespeichert werden. Eine Option dafür könnte Azure Blob Storage sein: https://argo-workflows.readthedocs.io/en/latest/configure-artifact-repository/ 
+Dafür muss auch ein *Artifact Repository* eingerichtet werden, wo die Logs gespeichert werden. Eine Option dafür könnte Azure Blob Storage sein: https://argo-workflows.readthedocs.io/en/latest/configure-artifact-repository/
+
+### POC Setup für Log Archivierung
+
+Für den POC kann auch ein lokales Minio Setup herhalten. Die Installationsschritte sind zusätzlich zu hier auch in `deploy.sh` festgehalten.
+
+Minio installieren:
+
+```
+helm repo add minio https://charts.min.io/
+helm repo update
+
+helm install argo-artifacts minio/minio \
+  --set fullnameOverride=argo-artifacts \
+  --set mode=standalone \
+  --set service.type=LoadBalancer
+```
+
+Minio UI port-forwarden (alternativ über k9s):
+
+```
+kubectl port-forward pod/argo-artifacts-<ID> 9001:9001 &
+```
+
+Jetzt sollte Minio über `localhost:9001` erreichbar sein.
+
+Um sich anzumelden, muss das Kubernetes Secret mit den Credentials dekodiert werden:
+
+```
+kubectl get secret argo-artifacts -o jsonpath="{.data.rootUser}" | base64 --decode
+
+kubectl get secret argo-artifacts -o jsonpath="{.data.rootPassword}" | base64 --decode
+
+```
+
+Mit diesen Credentials kann man sich in der Minio UI anmelden.
+
+Über die UI muss jetzt das Bucket `my-bucket` unter *Administrator -> Buckets -> Create Bucket* angelegt werden.
+
+
+Der Zugriff auf Minio wird über eine ConfigMap konfiguriert, in diesem Repo befindet sie sich in `dev/argo-workflows-minio.yaml`. 
+
+Im Workflow selber muss `archiveLogs` aktiviert und die ConfigMap der Minio Artifact Registry referenziert werden. Beispiel aus `dev/argo-workflows-examples.yaml`:
+
+```
+...
+kind: Workflow
+...
+spec:
+  archiveLogs: true
+  artifactRepositoryRef:
+    configMap: workflow-controller-configmap
+    key: artifactRepository
+```
