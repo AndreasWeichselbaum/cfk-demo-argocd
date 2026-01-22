@@ -9,26 +9,48 @@ spec:
     configMap: workflow-controller-configmap
     key: artifactRepository
   serviceAccountName: argo-workflow-testuser
-  entrypoint: argosay
-  arguments:
-    parameters:
-      - name: message
-        value: hello argo
+  entrypoint: list-topics
   templates:
-    - name: argosay
-      inputs:
-        parameters:
-          - name: message
-            value: "{{workflow.parameters.message}}"
+    - name: list-topics
       container:
         name: main
-        image: argoproj/argosay:v2
-        command:
-          - /argosay
-        args:
-          - echo
-          - "{{inputs.parameters.message}}"
+        image: confluentinc/cp-server:7.5.0
+        command: ["/bin/bash"]
+        args: ["-c", 'cd / && {{ printf "./tmp/%s"  list-topics.sh }}']
+        volumeMounts:
+          - mountPath: "/mnt"
+            name: kafka-poc-user-properties
+          - mountPath: "/tmp"
+            name: kafka-poc-commands
   ttlStrategy:
     secondsAfterCompletion: 300
   podGC:
     strategy: OnPodCompletion
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: kafka-poc-user-properties
+  namespace: default
+data:
+  kafka_user.properties: c2FzbC5qYWFzLmNvbmZpZz1vcmcuYXBhY2hlLmthZmthLmNvbW1vbi5zZWN1cml0eS5wbGFpbi5QbGFpbkxvZ2luTW9kdWxlIHJlcXVpcmVkIHVzZXJuYW1lPSJrYWZrYSIgcGFzc3dvcmQ9ImthZmthIjsKc2FzbC5tZWNoYW5pc209UExBSU4Kc2VjdXJpdHkucHJvdG9jb2w9U0FTTF9QTEFJTlRFWFQ=
+type: Opaque
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-poc-commands
+  namespace: default
+data:
+  list-topics.sh: >-
+    #!/bin/bash 
+
+    cd /bin
+
+    echo 'list topics:'
+
+    {{ printf (cat
+    "kafka-topics --list --bootstrap-server"
+    "kafka.kafka-%s.svc.cluster.local:9092" 
+    "--command-config /mnt/kafka_user.properties"
+    ) poc | join "\n" }}
