@@ -18,14 +18,14 @@ spec:
         command: ["/bin/bash"]
         args: ["-c", 'cd / && ./tmp/list-topics.sh']
         volumeMounts:
-          - mountPath: "/mnt"
-            name: kafka-poc-user-properties
+ #         - mountPath: "/mnt"
+ #           name: kafka-poc-user-properties
           - mountPath: "/tmp"
             name: kafka-poc-commands
       volumes:
-        - name: kafka-poc-user-properties
-          secret:
-            secretName: kafka-poc-user-properties
+  #      - name: kafka-poc-user-properties
+  #        secret:
+  #          secretName: kafka-poc-user-properties
         - name: kafka-poc-commands
           configMap:
             name: kafka-poc-commands
@@ -35,15 +35,15 @@ spec:
   podGC:
     strategy: OnPodCompletion
 ---
-kind: Secret
-apiVersion: v1
-metadata:
-  name: kafka-poc-user-properties
-  namespace: default
-data:
-  kafka_user.properties: c2FzbC5qYWFzLmNvbmZpZz1vcmcuYXBhY2hlLmthZmthLmNvbW1vbi5zZWN1cml0eS5wbGFpbi5QbGFpbkxvZ2luTW9kdWxlIHJlcXVpcmVkIHVzZXJuYW1lPSJrYWZrYSIgcGFzc3dvcmQ9ImthZmthIjsKc2FzbC5tZWNoYW5pc209UExBSU4Kc2VjdXJpdHkucHJvdG9jb2w9U0FTTF9QTEFJTlRFWFQ=
-type: Opaque
----
+#kind: Secret
+#apiVersion: v1
+#metadata:
+#  name: kafka-poc-user-properties
+#  namespace: default
+#data:
+#  kafka_user.properties: c2FzbC5qYWFzLmNvbmZpZz1vcmcuYXBhY2hlLmthZmthLmNvbW1vbi5zZWN1cml0eS5wbGFpbi5QbGFpbkxvZ2luTW9kdWxlIHJlcXVpcmVkIHVzZXJuYW1lPSJrYWZrYSIgcGFzc3dvcmQ9ImthZmthIjsKc2FzbC5tZWNoYW5pc209UExBSU4Kc2VjdXJpdHkucHJvdG9jb2w9U0FTTF9QTEFJTlRFWFQ=
+#type: Opaque
+#---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -57,4 +57,4 @@ data:
 
     echo 'list topics:'
 
-    kafka-topics --list --bootstrap-server kafka-poc.kafka-confluent-poc.svc.cluster.local:9092 --command-config /mnt/kafka_user.properties
+    kafka-topics --list --bootstrap-server kafka-poc.kafka-confluent-poc.svc.cluster.local:9092
