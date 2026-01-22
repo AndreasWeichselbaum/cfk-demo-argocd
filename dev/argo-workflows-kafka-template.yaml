@@ -57,4 +57,4 @@ data:
 
     echo 'list topics:'
 
-    kafka-topics --list --bootstrap-server kafka.kafka-poc.svc.cluster.local:9092 --command-config /mnt/kafka_user.properties
+    kafka-topics --list --bootstrap-server kafka.kafka-confluent-poc.svc.cluster.local:9092 --command-config /mnt/kafka_user.properties
