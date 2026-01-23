@@ -252,3 +252,141 @@ spec:
     configMap: workflow-controller-configmap
     key: artifactRepository
 ```
+
+## Workflows und WorkflowTemplates anlegen
+
+Ein Argo Workflow definiert eine konkrete ausführbare Pipeline, während ein Argo WorkflowTemplate eine wiederverwendbare Vorlage ist, aus der Workflows erst instanziiert werden.
+
+Man kann sowohl Workflows, als auch WorkflowTemplates deklarativ anlegen, wobei für unseren Anwendungszweck WorkflowTemplates geeigneter sind. Wird ein Workflow deklarativ angelegt, wird er sofort ausgeführt und verschwindet nach einer konfigurierten Zeit. Ein WorkflowTemplate hingegen ist persistent, und aus ihm können über die Argo Workflows UI Instanzen eines Workflows mit vor der Ausführung konfigurierbaren Parametern gestartet werden.
+
+Ein Beispiel eines Workflows befindet sich in `dev/argo-workflows-examples.yaml`.
+
+In `dev/argo-workflows-kafka-template.yaml` sind zwei minimale WorkflowTemplates implementiert, mit der Operationen auf dem Kafka Cluster ausgeführt werden können.
+
+Das WorkflowTemplate zum Auflisten von Topics benutzt ein Skript, welches als ConfigMap hinterlegt ist. Das WorkflowTemplate zur Änderung der Retention Zeit eines Topics verwendet ein Inline Skript direkt im Template. Der Vorteil dessen ist, dass so einfach Parameter angegeben werden können, wie in dem Fall z.B die Retention Zeit und der Name des Zieltopics. 
+
+Der lokale POC Kafka Cluster verlangt keine Authentifizierung. In einem Production Setup könnte man das für die Authentifizierung nötige Properties File vorab in einem Secret in OpenShift ablegen, und in den Workflow als Volume einbinden. Der Vorgang ist (abgesehen vom eingecheckten Secret) in den Kommentaren skizziert:
+
+```
+kubectl apply -f dev/argo-workflows-kafka-template.yaml 
+```
+
+```
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: kafka-poc-list-topics
+  namespace: argo-workflows
+spec:
+  archiveLogs: true
+  artifactRepositoryRef:
+    configMap: workflow-controller-configmap
+    key: artifactRepository
+  serviceAccountName: argo-workflow-testuser
+  entrypoint: list-topics
+  templates:
+    - name: list-topics
+      container:
+        name: main
+        image: confluentinc/cp-server:7.5.0
+        command: ["/bin/bash"]
+        args: ["-c", 'cd / && ./tmp/list-topics.sh']
+        volumeMounts:
+          - mountPath: "/tmp"
+            name: kafka-poc-commands
+ #         - mountPath: "/mnt"
+ #           name: kafka-poc-user-properties
+      volumes:
+        - name: kafka-poc-commands
+          configMap:
+            name: kafka-poc-commands
+            defaultMode: 0755
+  #      - name: kafka-poc-user-properties
+  #        secret:
+  #          secretName: kafka-poc-user-properties
+  ttlStrategy:
+    secondsAfterCompletion: 300
+  podGC:
+    strategy: OnPodCompletion
+---
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: kafka-poc-change-retention
+  namespace: argo-workflows
+spec:
+  archiveLogs: true
+  artifactRepositoryRef:
+    configMap: workflow-controller-configmap
+    key: artifactRepository
+  serviceAccountName: argo-workflow-testuser
+  entrypoint: change-retention
+  arguments:
+    parameters:
+      - name: topic
+      - name: retention_ms
+  templates:
+    - name: change-retention
+      container:
+        image: confluentinc/cp-server:7.5.0
+        command: ["/bin/bash"]
+        args:
+          - -c
+          - |
+            echo "=== BEFORE ==="
+            kafka-configs \
+              --bootstrap-server kafka-poc.kafka-confluent-poc.svc.cluster.local:9092 \
+              --entity-type topics \
+              --entity-name {{workflow.parameters.topic}} \
+              --describe
+
+            echo ""
+            echo "=== APPLY NEW RETENTION ==="
+            kafka-configs \
+              --bootstrap-server kafka-poc.kafka-confluent-poc.svc.cluster.local:9092 \
+              --entity-type topics \
+              --entity-name {{workflow.parameters.topic}} \
+              --alter \
+              --add-config retention.ms={{workflow.parameters.retention_ms}}
+
+            echo ""
+            echo "=== AFTER ==="
+            kafka-configs \
+              --bootstrap-server kafka-poc.kafka-confluent-poc.svc.cluster.local:9092 \
+              --entity-type topics \
+              --entity-name {{workflow.parameters.topic}} \
+              --describe
+  ttlStrategy:
+    secondsAfterCompletion: 300
+  podGC:
+    strategy: OnPodCompletion
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-poc-commands
+  namespace: argo-workflows
+data:
+  list-topics.sh: >-
+    #!/bin/bash 
+
+    cd /bin
+
+    echo 'list topics:'
+
+    kafka-topics --list --bootstrap-server kafka-poc.kafka-confluent-poc.svc.cluster.local:9092
+#---
+#kind: Secret
+#apiVersion: v1
+#metadata:
+#  name: kafka-poc-user-properties
+#  namespace: argo-workflows
+#data:
+#  kafka_user.properties: c2FzbC5qYWFzLmNvbmZpZz1vcmcuYXBhY2hlLmthZmthLmNvbW1vbi5zZWN1cml0eS5wbGFpbi5QbGFpbkxvZ2luTW9kdWxlIHJlcXVpcmVkIHVzZXJuYW1lPSJrYWZrYSIgcGFzc3dvcmQ9ImthZmthIjsKc2FzbC5tZWNoYW5pc209UExBSU4Kc2VjdXJpdHkucHJvdG9jb2w9U0FTTF9QTEFJTlRFWFQ=
+#type: Opaque
+
+# Example for kafka_user.properties in case authentification to kafka was necessary
+# sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="kafka" password="kafka";
+# sasl.mechanism=PLAIN
+# security.protocol=SASL_PLAINTEXT
+```
