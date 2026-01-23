@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   name: hello-argo
-  namespace: default
+  namespace: argo-workflows
   labels:
     example: "true"
 spec:

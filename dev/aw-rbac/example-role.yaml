@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argo-workflow-testuser
-  namespace: default
+  namespace: argo-workflows
 rules:
 - apiGroups:
     - argoproj.io

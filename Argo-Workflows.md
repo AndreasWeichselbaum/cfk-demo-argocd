@@ -15,7 +15,7 @@ Für das Aufsetzen von ArgoCD und CFK können die Befehle in `bootstrap/deploy.s
 Argo Workflows wird in einem eigenen Kubernetes Namespace deployed:
 
 ```
-kubectl create namespace argoworky
+kubectl create namespace argo-workflows
 ```
 
 ## AppProject Source und Destinations
@@ -36,7 +36,7 @@ spec:
     - 'https://argoproj.github.io/argo-helm'
 ...
   destinations:
-    - namespace: argoworky
+    - namespace: argo-workflows
       server: https://kubernetes.default.svc
       name: in-cluster
 ...
@@ -56,7 +56,7 @@ spec:
   project: kafka-confluent-poc-dev
   destination:
     #server: https://kubernetes.default.svc
-    namespace: argoworky
+    namespace: argo-workflows
     name: in-cluster
   syncPolicy:
     syncOptions:
@@ -175,7 +175,7 @@ In ArgoCD kann jetzt die `Application` von Argo Workflows synchronisiert werden.
 
 ## Auf Argo Workflows im Browser zugreifen
 
-In `k9s` oder über `kubectl` muss jetzt Port-Forwarding für den im `argoworky` Namespace laufenden Pod, dessen Name mit `argo-workflows-server` beginnt, eingerichtet werden. Dann kann Argo Workflows im Browser über [localhost:2746](localhost:2746) erreicht werden.
+In `k9s` oder über `kubectl` muss jetzt Port-Forwarding für den im `argo-workflows` Namespace laufenden Pod, dessen Name mit `argo-workflows-server` beginnt, eingerichtet werden. Dann kann Argo Workflows im Browser über [localhost:2746](localhost:2746) erreicht werden.
 
 ## Authentifizierung mit Argo Workflows
 

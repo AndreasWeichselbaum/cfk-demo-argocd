@@ -41,7 +41,7 @@ spec:
     - namespace: kafka-confluent-poc
       server: https://kubernetes.default.svc
       name: in-cluster
-    - namespace: argoworky
+    - namespace: argo-workflows
       server: https://kubernetes.default.svc
       name: in-cluster
     - namespace: default

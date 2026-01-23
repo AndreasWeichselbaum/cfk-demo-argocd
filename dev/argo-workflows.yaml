@@ -7,7 +7,7 @@ spec:
   project: kafka-confluent-poc-dev
   destination:
     #server: https://kubernetes.default.svc
-    namespace: argoworky
+    namespace: argo-workflows
     name: in-cluster
   syncPolicy:
     syncOptions:
