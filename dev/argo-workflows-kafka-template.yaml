@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: kafka-poc
+  name: kafka-poc-list-topics
   namespace: argo-workflows
 spec:
   archiveLogs: true
@@ -30,6 +30,58 @@ spec:
   #      - name: kafka-poc-user-properties
   #        secret:
   #          secretName: kafka-poc-user-properties
+  ttlStrategy:
+    secondsAfterCompletion: 300
+  podGC:
+    strategy: OnPodCompletion
+---
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: kafka-poc-change-retention
+  namespace: argo-workflows
+spec:
+  archiveLogs: true
+  artifactRepositoryRef:
+    configMap: workflow-controller-configmap
+    key: artifactRepository
+  serviceAccountName: argo-workflow-testuser
+  entrypoint: change-retention
+  arguments:
+    parameters:
+      - name: topic
+      - name: retention_ms
+  templates:
+    - name: change-retention
+      container:
+        image: confluentinc/cp-server:7.5.0
+        command: ["/bin/bash"]
+        args:
+          - -c
+          - |
+            echo "=== BEFORE ==="
+            kafka-configs \
+              --bootstrap-server kafka-poc.kafka-confluent-poc.svc.cluster.local:9092 \
+              --entity-type topics \
+              --entity-name {{workflow.parameters.topic}} \
+              --describe
+
+            echo ""
+            echo "=== APPLY NEW RETENTION ==="
+            kafka-configs \
+              --bootstrap-server kafka-poc.kafka-confluent-poc.svc.cluster.local:9092 \
+              --entity-type topics \
+              --entity-name {{workflow.parameters.topic}} \
+              --alter \
+              --add-config retention.ms={{workflow.parameters.retention_ms}}
+
+            echo ""
+            echo "=== AFTER ==="
+            kafka-configs \
+              --bootstrap-server kafka-poc.kafka-confluent-poc.svc.cluster.local:9092 \
+              --entity-type topics \
+              --entity-name {{workflow.parameters.topic}} \
+              --describe
   ttlStrategy:
     secondsAfterCompletion: 300
   podGC:
