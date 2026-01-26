@@ -390,3 +390,15 @@ data:
 # sasl.mechanism=PLAIN
 # security.protocol=SASL_PLAINTEXT
 ```
+
+## LDAP Anbindung und Auth
+
+Die Anbindung an LDAP erfolgt in Argo Workflows indirekt über den Dex‑Identity‑Provider von Argo CD, der als OIDC‑Brücke dient und Benutzeranfragen gegen das LDAP‑Verzeichnis authentifiziert, während Argo Workflows anschließend dessen SSO‑Token zur Anmeldung verwendet.
+
+Zur Einrichtung sind auf Argo Workflows Seite paar Änderungen in der `workflow-controller-configmap.yaml` ConfigMap notwendig, auf ArgoCD Seite in der `argocd-cm` ConfigMap. Diese sind hier dokumentiert:
+
+https://argo-workflows.readthedocs.io/en/latest/argo-server-sso/
+
+https://argo-workflows.readthedocs.io/en/latest/argo-server-sso-argocd/
+
+Optional kann auch RBAC zur SSO hinzugefügt werden. 
