@@ -26,7 +26,7 @@ kubectl apply -f ../dev/aw-rbac/example-crb.yaml
 kubectl apply -f ../dev/argo-workflows-minio.yaml
 
 helm repo add minio https://charts.min.io/
-helm repo update
+# helm repo update
 
 helm install argo-artifacts minio/minio -n argo-workflows \
   --set "fullnameOverride=argo-artifacts" \
